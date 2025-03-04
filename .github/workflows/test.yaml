@@ -4,13 +4,20 @@ on: [push]
 
 env:
   SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+  DOCKER_IMAGE: nexxel/ens-app-v3-test:latest
 
 jobs:
   coverage:
     runs-on: blacksmith-4vcpu-ubuntu-2204
+    container:
+      image: ${{ env.DOCKER_IMAGE }}
     steps:
       - uses: actions/checkout@v4
-      - uses: ./.github/actions/setup
+
+      # No need for setup-playwright, it's already in the Docker image
+      # We still need to install project dependencies
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
 
       - name: Get contract addresses
         run: 'parallel --lb --halt now,success=1,fail=1 ::: \
@@ -21,9 +28,15 @@ jobs:
 
   build-stateless:
     runs-on: blacksmith-4vcpu-ubuntu-2204
+    container:
+      image: ${{ env.DOCKER_IMAGE }}
     steps:
       - uses: actions/checkout@v4
-      - uses: ./.github/actions/setup
+
+      # No need for setup-playwright, it's already in the Docker image
+      # We still need to install project dependencies
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
 
       - name: Get contract addresses
         run: 'parallel --lb --halt now,success=1,fail=1 ::: \
@@ -44,9 +57,15 @@ jobs:
 
   build-stateful:
     runs-on: blacksmith-4vcpu-ubuntu-2204
+    container:
+      image: ${{ env.DOCKER_IMAGE }}
     steps:
       - uses: actions/checkout@v4
-      - uses: ./.github/actions/setup
+
+      # No need for setup-playwright, it's already in the Docker image
+      # We still need to install project dependencies
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
 
       - name: Build stateful and export
         run: pnpm build && pnpm export
@@ -65,13 +84,49 @@ jobs:
     needs: build-stateless
     timeout-minutes: 20
     runs-on: blacksmith-4vcpu-ubuntu-2204
+    container:
+      image: ${{ env.DOCKER_IMAGE }}
     strategy:
       matrix:
-        shard: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29]
+        shard:
+          [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+          ]
     steps:
       - uses: actions/checkout@v4
-      - uses: ./.github/actions/setup
-      - uses: ./.github/actions/setup-playwright
+
+      # No need for setup-playwright, it's already in the Docker image
+      # We still need to install project dependencies
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
 
       - run: pnpm rebuild -r
 
@@ -102,13 +157,18 @@ jobs:
     needs: build-stateful
     timeout-minutes: 10
     runs-on: blacksmith-4vcpu-ubuntu-2204
+    container:
+      image: ${{ env.DOCKER_IMAGE }}
     strategy:
       matrix:
         shard: [1, 2, 3]
     steps:
       - uses: actions/checkout@v4
-      - uses: ./.github/actions/setup
-      - uses: ./.github/actions/setup-playwright
+
+      # No need for setup-playwright, it's already in the Docker image
+      # We still need to install project dependencies
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
 
       - run: pnpm rebuild -r
 
