@@ -1,0 +1,51 @@
+FROM node:20-alpine
+
+# Install additional dependencies first for better caching
+RUN apk add --no-cache \
+    bash \
+    wget \
+    jq \
+    parallel \
+    git \
+    curl \
+    tar \
+    # Python and build tools for native modules
+    python3 \
+    make \
+    g++ \
+    # Playwright dependencies
+    chromium \
+    nss \
+    freetype \
+    harfbuzz \
+    ttf-freefont
+
+# Create symlink for python (needed by node-gyp)
+RUN ln -sf /usr/bin/python3 /usr/bin/python
+
+# Set working directory
+WORKDIR /app
+
+# Install pnpm
+RUN npm install -g pnpm@9.3.0
+
+# Set pnpm store directory
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+
+# Install Playwright globally to ensure the CLI is available
+RUN npm install -g playwright@1.40.0
+
+# Use system Chromium
+ENV PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1
+ENV PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium-browser
+
+# Setup for native module compilation
+ENV PYTHON=/usr/bin/python3
+
+# This is a test environment, so we don't need to copy the actual code
+# The code will be mounted or checked out during the CI process
+
+# Set entrypoint to bash
+ENTRYPOINT ["/bin/bash", "-c"]
+CMD ["bash"] 
