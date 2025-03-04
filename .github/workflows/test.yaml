@@ -4,13 +4,12 @@ on: [push]
 
 env:
   SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-  DOCKER_IMAGE: nexxel/ens-app-v3-test:latest
 
 jobs:
   coverage:
     runs-on: blacksmith-4vcpu-ubuntu-2204
     container:
-      image: ${{ env.DOCKER_IMAGE }}
+      image: nexxel/ens-app-v3-test:latest
     steps:
       - uses: actions/checkout@v4
 
