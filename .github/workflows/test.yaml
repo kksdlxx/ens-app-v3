@@ -28,7 +28,7 @@ jobs:
   build-stateless:
     runs-on: blacksmith-4vcpu-ubuntu-2204
     container:
-      image: ${{ env.DOCKER_IMAGE }}
+      image: nexxel/ens-app-v3-test:latest
     steps:
       - uses: actions/checkout@v4
 
@@ -57,7 +57,7 @@ jobs:
   build-stateful:
     runs-on: blacksmith-4vcpu-ubuntu-2204
     container:
-      image: ${{ env.DOCKER_IMAGE }}
+      image: nexxel/ens-app-v3-test:latest
     steps:
       - uses: actions/checkout@v4
 
@@ -84,7 +84,7 @@ jobs:
     timeout-minutes: 20
     runs-on: blacksmith-4vcpu-ubuntu-2204
     container:
-      image: ${{ env.DOCKER_IMAGE }}
+      image: nexxel/ens-app-v3-test:latest
     strategy:
       matrix:
         shard:
@@ -157,7 +157,7 @@ jobs:
     timeout-minutes: 10
     runs-on: blacksmith-4vcpu-ubuntu-2204
     container:
-      image: ${{ env.DOCKER_IMAGE }}
+      image: nexxel/ens-app-v3-test:latest
     strategy:
       matrix:
         shard: [1, 2, 3]
