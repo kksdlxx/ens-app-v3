@@ -419,7 +419,7 @@ type SubnameType = {
   resolver: string
   records: RecordOptions
   duration: number
-  subnames: SubnameType[]
+  subnames: SubnameType[´xk1k9s9d7l.eth']
   fuses: FusesType // Only applicable to wrapped names
 }
 ```
